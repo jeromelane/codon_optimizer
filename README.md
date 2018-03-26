@@ -1,5 +1,5 @@
 # codon_optimizer
-Codon optimizer is a simple tool to exchange codons that have a low frequency to codons with the highest frequency in the organism of reference like Homo sapiens.
+A simple tool to produce DNA sequences with the most abundant codons in a specific organism.
 
 # Parameters
 *  -h, --help            show this help message and exit
