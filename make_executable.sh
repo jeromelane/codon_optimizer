@@ -1,0 +1,1 @@
+pyinstaller codon_optimizer.py

@@ -1,0 +1,2 @@
+include README.rst
+include codon_optimizer/reference_seq/*
