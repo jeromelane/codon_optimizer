@@ -1,0 +1,72 @@
+INFO:root:--- Program starts at: Tue Mar 27 21:32:04 2018 ---
+INFO:root:Codon optimizer
+INFO:root:Options: 
+1- nolog=False
+2- input=/Users/jlane/PycharmProjects/codon_optimizer/test/cases/input_coding_sequences.fa
+3- reference_frequency_table=
+4- output=/Users/jlane/PycharmProjects/codon_optimizer/test/output/coding_seq_codon_optimized.fasta
+
+INFO:root:PT1.E6.TCR.1/PT1.SIPA1L3.TCR.1.A : []
+INFO:root:PT1.E6.TCR.1/PT1.SIPA1L3.TCR.1.B : []
+INFO:root:--- Program ends at: Tue Mar 27 21:32:05 2018 ---
+INFO:root:--- Program starts at: Tue Mar 27 21:32:05 2018 ---
+INFO:root:Codon optimizer
+INFO:root:Options: 
+1- nolog=False
+2- input=/Users/jlane/PycharmProjects/codon_optimizer/test/cases/input_mix_coding_not_coding.fasta
+3- reference_frequency_table=
+4- output=/Users/jlane/PycharmProjects/codon_optimizer/test/output/mix_coding_not_coding_optimized.fasta
+
+INFO:root:PT1.E6.TCR.1/PT1.SIPA1L3.TCR.1.A : []
+INFO:root:cell_id=003_SCT80_AIT_015_Bcells_C1_N701S505.bcr.txt;light_chain;BASIC : ['Sequence contains stop codon.']
+INFO:root:PT1.E6.TCR.1/PT1.SIPA1L3.TCR.1.B : []
+INFO:root:cell_id=003_SCT80_AIT_015_Bcells_C1_N701S505.bcr.txt;heavy_chain;BASIC : ['Sequence contains stop codon.']
+INFO:root:--- Program ends at: Tue Mar 27 21:32:07 2018 ---
+INFO:root:--- Program starts at: Tue Mar 27 21:32:07 2018 ---
+INFO:root:Codon optimizer
+INFO:root:Options: 
+1- nolog=False
+2- input=/Users/jlane/PycharmProjects/codon_optimizer/test/cases/input_mix_coding_not_coding.fasta
+3- reference_frequency_table=/Users/jlane/PycharmProjects/codon_optimizer/test/cases/Mus_musculus_codon_frequency.csv
+4- output=/Users/jlane/PycharmProjects/codon_optimizer/test/output/mix_coding_not_coding_optimized.fasta
+
+INFO:root:PT1.E6.TCR.1/PT1.SIPA1L3.TCR.1.A : []
+INFO:root:cell_id=003_SCT80_AIT_015_Bcells_C1_N701S505.bcr.txt;light_chain;BASIC : ['Sequence contains stop codon.']
+INFO:root:PT1.E6.TCR.1/PT1.SIPA1L3.TCR.1.B : []
+INFO:root:cell_id=003_SCT80_AIT_015_Bcells_C1_N701S505.bcr.txt;heavy_chain;BASIC : ['Sequence contains stop codon.']
+INFO:root:--- Program ends at: Tue Mar 27 21:32:08 2018 ---
+INFO:root:--- Program starts at: Tue Mar 27 21:32:08 2018 ---
+INFO:root:Codon optimizer
+INFO:root:Options: 
+1- nolog=False
+2- input=/Users/jlane/PycharmProjects/codon_optimizer/test/cases/input_not_coding_sequences.fa
+3- reference_frequency_table=
+4- output=/Users/jlane/PycharmProjects/codon_optimizer/test/output/not_coding_seq_codon_optimized.fasta
+
+INFO:root:cell_id=003_SCT80_AIT_015_Bcells_C1_N701S505.bcr.txt;light_chain;BASIC : ['Sequence contains stop codon.']
+INFO:root:cell_id=003_SCT80_AIT_015_Bcells_C1_N701S505.bcr.txt;heavy_chain;BASIC : ['Sequence contains stop codon.']
+INFO:root:--- Program ends at: Tue Mar 27 21:32:08 2018 ---
+INFO:root:--- Program starts at: Tue Mar 27 21:32:08 2018 ---
+INFO:root:Codon optimizer
+INFO:root:Options: 
+1- nolog=False
+2- input=/Users/jlane/PycharmProjects/codon_optimizer/test/cases/input_coding_rna.fa
+3- reference_frequency_table=
+4- output=/Users/jlane/PycharmProjects/codon_optimizer/test/output/mix_coding_not_coding_optimized.fasta
+
+INFO:root:PT1.E6.TCR.1/PT1.SIPA1L3.TCR.1.A : []
+INFO:root:PT1.E6.TCR.1/PT1.SIPA1L3.TCR.1.B : []
+INFO:root:--- Program ends at: Tue Mar 27 21:32:09 2018 ---
+INFO:root:--- Program starts at: Tue Mar 27 21:32:09 2018 ---
+INFO:root:Codon optimizer
+INFO:root:Options: 
+1- nolog=False
+2- input=/Users/jlane/PycharmProjects/codon_optimizer/test/cases/input_mix_coding_not_coding.fasta
+3- reference_frequency_table=
+4- output=/Users/jlane/PycharmProjects/codon_optimizer/test/output/mix_coding_not_coding_optimized.fasta
+
+INFO:root:PT1.E6.TCR.1/PT1.SIPA1L3.TCR.1.A : []
+INFO:root:cell_id=003_SCT80_AIT_015_Bcells_C1_N701S505.bcr.txt;light_chain;BASIC : ['Sequence contains stop codon.']
+INFO:root:PT1.E6.TCR.1/PT1.SIPA1L3.TCR.1.B : []
+INFO:root:cell_id=003_SCT80_AIT_015_Bcells_C1_N701S505.bcr.txt;heavy_chain;BASIC : ['Sequence contains stop codon.']
+INFO:root:--- Program ends at: Tue Mar 27 21:32:10 2018 ---

@@ -1,0 +1,11 @@
+MANIFEST.in
+setup.py
+codon_optimizer/__init__.py
+codon_optimizer/codon_optimizer.py
+codon_optimizer.egg-info/PKG-INFO
+codon_optimizer.egg-info/SOURCES.txt
+codon_optimizer.egg-info/dependency_links.txt
+codon_optimizer.egg-info/requires.txt
+codon_optimizer.egg-info/top_level.txt
+codon_optimizer/reference_seq/Homo_sapiens_codon_frequency.csv
+codon_optimizer/reference_seq/Mus_musculus_codon_frequency.csv

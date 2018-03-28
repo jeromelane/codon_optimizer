@@ -1,0 +1,18 @@
+Metadata-Version: 1.1
+Name: codon-optimizer
+Version: 0.2.0
+Summary: Substitute codons by those that are the most frequent in a specific organism.
+Home-page: https://github.com/jeromelane/codon_optimizer
+Author: Jerome Lane
+Author-email: jerome.lane@hotmail.com
+License: http://www.apache.org/licenses/LICENSE-2.0.html
+Description-Content-Type: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Environment :: Console
+Classifier: Operating System :: OS Independent
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Programming Language :: Python
+Classifier: Topic :: Scientific/Engineering :: Bio-Informatics
