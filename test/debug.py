@@ -1,10 +1,15 @@
 import unittest
-from codon_optimizer import *
+from codon_optimizer.codon_optimizer import codon_optimizer, Sequence
 import filecmp
 import sys
 import os
 
+
 class TestCodonOptimizer(unittest.TestCase):
+    MIX_CODING_CASES = "/cases/mix_coding_not_coding_optimized_formatted.fasta"
+    CODING_CASES = "/cases/input_mix_coding_not_coding.fasta"
+    OUTPUT_FOR_CODING_CASES = "/output/mix_coding_not_coding_optimized.fasta"
+
     def test_input_output_coding_sequence(self):
         execution_path = os.path.dirname(__file__)
         os.chdir(execution_path)
@@ -34,9 +39,9 @@ class TestCodonOptimizer(unittest.TestCase):
         execution_path = os.path.dirname(__file__)
         os.chdir(execution_path)
 
-        reference_output_fasta = execution_path + "/cases/mix_coding_not_coding_optimized_formatted.fasta"
-        input_fasta = execution_path + "/cases/input_mix_coding_not_coding.fasta"
-        output = execution_path + "/output/mix_coding_not_coding_optimized.fasta"
+        reference_output_fasta = execution_path + self.MIX_CODING_CASES
+        input_fasta = execution_path + self.CODING_CASES
+        output = execution_path + self.OUTPUT_FOR_CODING_CASES
 
         sys.argv = [sys.argv[0], "-input", input_fasta, "-output", output]
         codon_optimizer()
@@ -47,9 +52,9 @@ class TestCodonOptimizer(unittest.TestCase):
         execution_path = os.path.dirname(__file__)
         os.chdir(execution_path)
 
-        reference_output_fasta = execution_path + "/cases/mix_coding_not_coding_optimized_formatted.fasta"
-        input_fasta = execution_path + "/cases/input_mix_coding_not_coding.fasta"
-        output = execution_path + "/output/mix_coding_not_coding_optimized.fasta"
+        reference_output_fasta = execution_path + self.MIX_CODING_CASES
+        input_fasta = execution_path + self.CODING_CASES
+        output = execution_path + self.OUTPUT_FOR_CODING_CASES
         reffreqtab = execution_path + "/cases/Mus_musculus_codon_frequency.csv"
 
         sys.argv = [sys.argv[0], "-input", input_fasta, "-output", output, "-reffreqtab", reffreqtab]
@@ -61,9 +66,8 @@ class TestCodonOptimizer(unittest.TestCase):
         execution_path = os.path.dirname(__file__)
         os.chdir(execution_path)
 
-        reference_output_fasta = execution_path + "/cases/mix_coding_not_coding_optimized_formatted.fasta"
-        input_fasta = execution_path + "/cases/input_mix_coding_not_coding.fasta"
-        output = execution_path + "/output/mix_coding_not_coding_optimized.fasta"
+        input_fasta = execution_path + self.CODING_CASES
+        output = execution_path + self.OUTPUT_FOR_CODING_CASES
         log = execution_path + "/output/codon_optimizer.log"
         sys.argv = [sys.argv[0], "-input", input_fasta, "-output", output]
         codon_optimizer()
@@ -74,9 +78,8 @@ class TestCodonOptimizer(unittest.TestCase):
         execution_path = os.path.dirname(__file__)
         os.chdir(execution_path)
 
-        reference_output_fasta = execution_path + "/cases/mix_coding_not_coding_optimized_formatted.fasta"
         input_fasta = execution_path + "/file_that_does_not_exists.fasta"
-        output = execution_path + "/output/mix_coding_not_coding_optimized.fasta"
+        output = execution_path + self.MIX_CODING_CASES
 
         sys.argv = [sys.argv[0], "-input", input_fasta, "-output", output]
 
@@ -87,9 +90,9 @@ class TestCodonOptimizer(unittest.TestCase):
         execution_path = os.path.dirname(__file__)
         os.chdir(execution_path)
 
-        reference_output_fasta = execution_path + "/cases/coding_seq_codon_optimized_formatted.fasta"
+        reference_output_fasta = execution_path + self.MIX_CODING_CASES
         input_fasta = execution_path + "/cases/input_coding_rna.fa"
-        output = execution_path + "/output/mix_coding_not_coding_optimized.fasta"
+        output = execution_path + self.OUTPUT_FOR_CODING_CASES
 
         sys.argv = [sys.argv[0], "-input", input_fasta, "-output", output]
 
@@ -100,10 +103,6 @@ class TestCodonOptimizer(unittest.TestCase):
 
 
 class TestSequenceControl(unittest.TestCase):
-
-    # def test_input_format(self):
-    #     self.assertTrue(File().isFastaFormat())
-
     def test_sequence_validation(self):
         self.assertTrue(Sequence("ATGCCCTGGGT").isValid())
         self.assertFalse(Sequence("ATGCCCTGGGT*)*%").isValid())
@@ -134,5 +133,6 @@ class TestSequenceControl(unittest.TestCase):
     def test_methionine(self):
         self.assertTrue(Sequence('ATGTGA').isMetCodonAtIts5prime())
 
-if __name__ == '__main__':
+
+def tests():
     unittest.main()

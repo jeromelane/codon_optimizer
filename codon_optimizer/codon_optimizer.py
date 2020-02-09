@@ -132,10 +132,9 @@ class Sequence(Seq):
     def isStopCodonInCodingFrame(self,coding_frame=0):
         sequence = self.sequence[coding_frame:]
         for pos in arange(0, len(sequence)-3, 3):
-            mySeqToCompare = sequence[pos:(pos + 3)]
-            if Sequence(mySeqToCompare).isLongerThan(2):
-                if mySeqToCompare in ["TGA","TAG","TAA"]:
-                    return True
+            my_seq_to_compare = sequence[pos:(pos + 3)]
+            if Sequence(my_seq_to_compare).isLongerThan(2) and (my_seq_to_compare in ["TGA","TAG","TAA"]):
+                return True
         return False
 
     def general_info(self):
@@ -157,6 +156,40 @@ class Sequence(Seq):
     def isx3(self):
         return (len(self.sequence) % 3) == 0
 
+
+def check_path(args):
+    if not os.path.exists(args.input):
+        raise IOError("Please provide a fasta file containing sequences to analyze: file path=" + args.input)
+
+
+def get_reference_frequency_table(args, execution_path):
+    if args.reference_frequency_table != "":
+        if not os.path.exists(args.reference_frequency_table):
+            raise IOError("Please provide a correct path to the reference file.")
+        codon_frequency_table = read_csv(args.reference_frequency_table)
+    else:
+        codon_frequency_table = read_csv(execution_path + "/reference_seq/Homo_sapiens_codon_frequency.csv")
+    return codon_frequency_table
+
+
+def process_sequences(not_optimized, codon_frequency_table):
+    valid_sequence_ids = []
+    optimized_sequences = []
+    for seq_id in not_optimized.keys():
+        seq_to_test = Sequence(str(not_optimized[seq_id].seq))
+        if seq_to_test.isRNA():
+            seq_to_test.convertRNAtoDNA()
+        if seq_to_test.isValid():
+            seq_to_test.general_info()
+            optimized_seq = seq_to_test.get_codon_optimized_sequence(codon_frequency_table)
+            seqrec = SeqRecord(optimized_seq, id=seq_id, description="codon optimized sequence")
+            optimized_sequences.append(seqrec)
+            valid_sequence_ids.append(seq_id)
+
+        logging.info(seq_id + " : " + str(seq_to_test.qc_msg))
+    return valid_sequence_ids, optimized_sequences
+
+
 def codon_optimizer():
     parser = program_setting()
     args = parser.parse_args()
@@ -165,8 +198,7 @@ def codon_optimizer():
     os.chdir(execution_path)
 
     output = args.output
-    if not os.path.exists(args.input):
-        raise IOError("Please provide a fasta file containing sequences to analyze: file path=" + args.input)
+    check_path(args)
 
     if not args.nolog:
         logging.basicConfig(filename=os.path.dirname(output) + '/codon_optimizer.log', level=logging.INFO)
@@ -175,29 +207,9 @@ def codon_optimizer():
     logging.info("Codon optimizer")
     logging.info(Options(args))
 
+    codon_frequency_table = get_reference_frequency_table(args, execution_path)
     not_optimized = SeqIO.to_dict(SeqIO.parse(args.input, "fasta"))
-
-    if args.reference_frequency_table != "":
-        if not os.path.exists(args.reference_frequency_table):
-            raise IOError("Please provide a correct path to the reference file.")
-        codon_frequency_table = read_csv(args.reference_frequency_table)
-    else:
-        codon_frequency_table = read_csv(execution_path + "/reference_seq/Homo_sapiens_codon_frequency.csv")
-
-    valid_sequence_ids=[]
-    optimized_sequences = []
-    for seq_id in not_optimized.keys():
-        seqToTest = Sequence(str(not_optimized[seq_id].seq))
-        if seqToTest.isRNA():
-            seqToTest.convertRNAtoDNA()
-        if seqToTest.isValid():
-            seqToTest.general_info()
-            optimized_seq = seqToTest.get_codon_optimized_sequence(codon_frequency_table)
-            seqrec = SeqRecord(optimized_seq, id=seq_id, description="codon optimized sequence")
-            optimized_sequences.append(seqrec)
-            valid_sequence_ids.append(seq_id)
-
-        logging.info(seq_id + " : " + str(seqToTest.qc_msg))
+    valid_sequence_ids, optimized_sequences = process_sequences(not_optimized, codon_frequency_table)
 
     if len(valid_sequence_ids) == 0:
         print("No valid sequences. No sequence optimized.")
@@ -209,6 +221,7 @@ def codon_optimizer():
             print(sequence.format('fasta'))
 
     logging.info("--- Program ends at: %s ---" % asctime(localtime(time())))
+
 
 if __name__ == '__main__':
     try:
