@@ -13,6 +13,7 @@ A simple tool to produce DNA sequences with the most abundant codons in a specif
 *  -nolog                Detailed output (default: False)
 *  --version             show program's version number and exit
 
+
  # Usage
 
  ```python
