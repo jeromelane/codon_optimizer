@@ -20,8 +20,13 @@ class TestCodonOptimizer(unittest.TestCase):
 
         sys.argv = [sys.argv[0], "-input", input_fasta, "-output", output]
         codon_optimizer()
-
-        self.assertTrue(filecmp.cmp(reference_output_fasta, output))
+        a = open(reference_output_fasta, 'r')
+        b = open(output, 'r')
+        a_read = a.read()
+        b_read = b.read()
+        a.close()
+        b.close()
+        self.assertTrue(a_read == b_read)
 
     def test_input_output_not_coding_sequence(self):
         execution_path = os.path.dirname(__file__)
@@ -46,7 +51,13 @@ class TestCodonOptimizer(unittest.TestCase):
         sys.argv = [sys.argv[0], "-input", input_fasta, "-output", output]
         codon_optimizer()
 
-        self.assertTrue(filecmp.cmp(reference_output_fasta, output))
+        a = open(reference_output_fasta, 'r')
+        b = open(output, 'r')
+        a_read = a.read()
+        b_read = b.read()
+        a.close()
+        b.close()
+        self.assertTrue(a_read == b_read)
 
     def test_input_output_mix_coding_not_coding_sequence_different_ref_freqtab(self):
         execution_path = os.path.dirname(__file__)
@@ -60,7 +71,13 @@ class TestCodonOptimizer(unittest.TestCase):
         sys.argv = [sys.argv[0], "-input", input_fasta, "-output", output, "-reffreqtab", reffreqtab]
         codon_optimizer()
 
-        self.assertFalse(filecmp.cmp(reference_output_fasta, output))
+        a = open(reference_output_fasta, 'r')
+        b = open(output, 'r')
+        a_read = a.read()
+        b_read = b.read()
+        a.close()
+        b.close()
+        self.assertFalse(a_read == b_read)
 
     def test_log_creation(self):
         execution_path = os.path.dirname(__file__)
@@ -99,39 +116,45 @@ class TestCodonOptimizer(unittest.TestCase):
         sys.argv = [sys.argv[0], "-input", input_fasta, "-output", output]
         codon_optimizer()
 
-        self.assertTrue(filecmp.cmp(reference_output_fasta, output))
+        a = open(reference_output_fasta, 'r')
+        b = open(output, 'r')
+        a_read = a.read()
+        b_read = b.read()
+        a.close()
+        b.close()
+        self.assertTrue(a_read == b_read)
 
 
 class TestSequenceControl(unittest.TestCase):
     def test_sequence_validation(self):
-        self.assertTrue(Sequence("ATGCCCTGGGT").isValid())
-        self.assertFalse(Sequence("ATGCCCTGGGT*)*%").isValid())
-        self.assertFalse(Sequence("ATGCCCTGGGTATGA%").isValid())
-        self.assertTrue(Sequence("ATGCCCTGGGAAATGA").isValid())
+        self.assertTrue(Sequence("ATGCCCTGGGT").is_valid())
+        self.assertFalse(Sequence("ATGCCCTGGGT*)*%").is_valid())
+        self.assertFalse(Sequence("ATGCCCTGGGTATGA%").is_valid())
+        self.assertTrue(Sequence("ATGCCCTGGGAAATGA").is_valid())
 
     def test_sequence_characters(self):
-        self.assertFalse(Sequence("").isNucleotide())
-        self.assertFalse(Sequence("ATGC+%^&()*)*%").isNucleotide())
-        self.assertTrue(Sequence('ATGCCCTGG').isNucleotide())
+        self.assertFalse(Sequence("").is_nucleotide())
+        self.assertFalse(Sequence("ATGC+%^&()*)*%").is_nucleotide())
+        self.assertTrue(Sequence('ATGCCCTGG').is_nucleotide())
 
     def test_sequence_length(self):
-        self.assertFalse(Sequence("AA").isLongerThan(2), 2)
-        self.assertTrue(Sequence("AAAAAA").isLongerThan(2), 2)
+        self.assertFalse(Sequence("AA").is_longer_than(2), 2)
+        self.assertTrue(Sequence("AAAAAA").is_longer_than(2), 2)
 
     def test_multipleofthree(self):
         self.assertTrue(Sequence('ATG').isx3())
         self.assertFalse(Sequence('A').isx3())
 
     def test_stop_codon(self):
-        self.assertTrue(Sequence('TGAATG').isStopCodonInCodingFrame())
-        self.assertTrue(Sequence('TgAATG').isStopCodonInCodingFrame())
-        self.assertFalse(Sequence('ATGA').isStopCodonInCodingFrame())
-        self.assertFalse(Sequence('aTgA').isStopCodonInCodingFrame())
-        self.assertFalse(Sequence('A').isStopCodonInCodingFrame())
-        self.assertTrue(Sequence('ATGTGAtTGA').isStopCodonAtIts3prime())
+        self.assertTrue(Sequence('TGAATG').is_stop_codon_in_coding_frame())
+        self.assertTrue(Sequence('TgAATG').is_stop_codon_in_coding_frame())
+        self.assertFalse(Sequence('ATGA').is_stop_codon_in_coding_frame())
+        self.assertFalse(Sequence('aTgA').is_stop_codon_in_coding_frame())
+        self.assertFalse(Sequence('A').is_stop_codon_in_coding_frame())
+        self.assertTrue(Sequence('ATGTGAtTGA').is_stop_codon_at_its_3prime())
 
     def test_methionine(self):
-        self.assertTrue(Sequence('ATGTGA').isMetCodonAtIts5prime())
+        self.assertTrue(Sequence('ATGTGA').is_met_codon_at_its_5prime())
 
 
 def tests():

@@ -10,8 +10,11 @@ from numpy import where, arange
 from time import asctime, localtime, time
 from pandas import read_csv
 
+
 def program_setting():
-    parser = argparse.ArgumentParser(description="Codon optimizer is a simple tool to exchange codons that have a low frequency to codons with the highest frequency in the organism of reference like Homo sapiens ")
+    parser = argparse.ArgumentParser(description="Codon optimizer is a simple tool to exchange codons that have a low "
+                                                 "frequency to codons with the highest frequency in the organism of "
+                                                 "reference like Homo sapiens ")
 
     parser.add_argument('-input', action='store', dest='input', required=True,
                         default="",
@@ -19,7 +22,8 @@ def program_setting():
 
     parser.add_argument('-reffreqtab', action='store', dest='reference_frequency_table',
                         default="",
-                        help='input path to the reference frequency table, can be found: http://www.kazusa.or.jp/codon/ (default: Homo sapiens)')
+                        help='input path to the reference frequency table, can be found: http://www.kazusa.or.jp/codon/'
+                             ' (default: Homo sapiens)')
 
     parser.add_argument('-output', action='store', dest='output',
                         default="",
@@ -29,8 +33,9 @@ def program_setting():
                         default=False,
                         help='disable log (default: False)')
 
-    parser.add_argument('--version', action='version', version='codon optimizer 0.2')
+    parser.add_argument('--version', action='version', version='codon optimizer 0.3')
     return parser
+
 
 class Options(object):
     def __init__(self, args):
@@ -48,13 +53,20 @@ class Options(object):
     def __repr__(self):
         return self.format()
 
+
 class Sequence(Seq):
     def __init__(self, sequence):
         Seq.__init__(self, sequence.upper())
         self.sequence = str(self)
         self.qc_msg = []
 
-    def get_optimized_codon(self,codon, codon_frequency_table):
+    def get_optimized_codon(self, codon, codon_frequency_table):
+        """
+        Retrieve most frequent codon corresponding to input codon amino acid from the input codon frequency table
+        :param codon: codon
+        :param codon_frequency_table: codon frequency table
+        :return: optimized codon
+        """
         codon_indexes = where(codon_frequency_table['Codon'] == codon.upper())[0]
         codon_row = codon_frequency_table.iloc[codon_indexes]
 
@@ -64,13 +76,17 @@ class Sequence(Seq):
         amino_acid_rows = codon_frequency_table.ix[amino_acid_indexes]
         optimized_codon_index = where(amino_acid_rows["/1000"] == max(amino_acid_rows["/1000"]))[0]
 
-        optimized_codon = amino_acid_rows["Codon"].iloc[optimized_codon_index].iloc[0]
-        return optimized_codon
+        return amino_acid_rows["Codon"].iloc[optimized_codon_index].iloc[0]
 
     def get_codon(self, start):
         return Sequence(self.sequence[start:start + 3])
 
     def get_codon_optimized_sequence(self, codon_frequency_table):
+        """
+        Replace each of codon input sequence with its most frequently represented triplet sequence
+        :param codon_frequency_table: csv formatted codon frequency table
+        :return: codon optimized sequence
+        """
         optimized_codons = []
         for index in arange(0, len(self.sequence), 3):
             codon = self.get_codon(index)
@@ -81,10 +97,10 @@ class Sequence(Seq):
                 optimized_codons.append(codon)
         return Sequence("".join(optimized_codons))
 
-    def isLongerThan(self, ln):
+    def is_longer_than(self, ln):
         return len(self.sequence) > ln
 
-    def isStopCodonAtIts3prime(self):
+    def is_stop_codon_at_its_3prime(self):
         lngth = len(self.sequence)
         last_codon = self.sequence[(lngth-3):lngth]
         if last_codon not in ["TGA", "TAG", "TAA"]:
@@ -92,14 +108,14 @@ class Sequence(Seq):
             return False
         return True
 
-    def isMetCodonAtIts5prime(self):
+    def is_met_codon_at_its_5prime(self):
         start_codon = self.sequence[0:3]
         if start_codon not in ["ATG"]:
             self.qc_msg.append("No Methionine codon at its 5 prime: " + start_codon)
             return False
         return True
 
-    def isNucleotide(self):
+    def is_nucleotide(self):
         if self.sequence == "":
             return False
         for nt in self.sequence:
@@ -108,47 +124,50 @@ class Sequence(Seq):
                 return False
         return True
 
-    def isDNA(self):
+    def is_dna(self):
         for nt in self.sequence:
-            if not nt in ["A","T","G","C"]:
-                if nt == "U":
-                    return False
-                else:
-                    self.qc_msg.append("Not nucleotide: " + nt)
+            if nt == "U":
+                return False
+            if nt not in ["A", "T", "G", "C"]:
+                self.qc_msg.append("Not nucleotide: " + nt)
         return True
 
-    def isRNA(self):
+    def is_rna(self):
         for nt in self.sequence:
             if nt == "U":
                 return True
         return False
 
-    def convertRNAtoDNA(self, inplace=True):
+    def convert_rna_to_dna(self, inplace=True):
         converted_seq = self.sequence.replace("U", "T")
         if not inplace:
             return converted_seq
         self.sequence = converted_seq
 
-    def isStopCodonInCodingFrame(self,coding_frame=0):
+    def is_stop_codon_in_coding_frame(self, coding_frame=0):
         sequence = self.sequence[coding_frame:]
         for pos in arange(0, len(sequence)-3, 3):
             my_seq_to_compare = sequence[pos:(pos + 3)]
-            if Sequence(my_seq_to_compare).isLongerThan(2) and (my_seq_to_compare in ["TGA","TAG","TAA"]):
+            if Sequence(my_seq_to_compare).is_longer_than(2) and (my_seq_to_compare in ["TGA", "TAG", "TAA"]):
                 return True
         return False
 
     def general_info(self):
-        self.isStopCodonAtIts3prime()
-        self.isMetCodonAtIts5prime()
+        self.is_stop_codon_at_its_3prime()
+        self.is_met_codon_at_its_5prime()
 
-    def isValid(self):
-        if not self.isNucleotide():
+    def is_valid(self):
+        """
+        Verify if sequence is valid for processing
+        :return: True if sequence can be processed, False if not
+        """
+        if not self.is_nucleotide():
             self.qc_msg.append("Sequence has unrecognized character.")
             return False
-        if not self.isLongerThan(2):
+        if not self.is_longer_than(2):
             self.qc_msg.append("Sequence is too short.")
             return False
-        if self.isStopCodonInCodingFrame():
+        if self.is_stop_codon_in_coding_frame():
             self.qc_msg.append("Sequence contains stop codon.")
             return False
         return True
@@ -158,28 +177,46 @@ class Sequence(Seq):
 
 
 def check_path(args):
+    """
+    Check if input file path exists
+    :param args: input data to codon optimizer
+    """
     if not os.path.exists(args.input):
         raise IOError("Please provide a fasta file containing sequences to analyze: file path=" + args.input)
 
 
 def get_reference_frequency_table(args, execution_path):
+    """
+    Verify existence of a reference codon frequency table and load it in CSV format
+    :param args: codon optimizer input data
+    :param execution_path: path where program is executed
+    :return: reference codon frequency table in CSV format
+    """
     if args.reference_frequency_table != "":
         if not os.path.exists(args.reference_frequency_table):
             raise IOError("Please provide a correct path to the reference file.")
-        codon_frequency_table = read_csv(args.reference_frequency_table)
+        return read_csv(args.reference_frequency_table)
     else:
-        codon_frequency_table = read_csv(execution_path + "/reference_seq/Homo_sapiens_codon_frequency.csv")
-    return codon_frequency_table
+        return read_csv(execution_path + "/reference_seq/Homo_sapiens_codon_frequency.csv")
 
 
 def process_sequences(not_optimized, codon_frequency_table):
+    """
+    Optimize sequence codons:
+        - Converts it to RNA if input sequence is DNA
+        - Check that sequence can be optimizable
+        - Replace codons by there most frequent synonymous codon
+    :param not_optimized: Sequence to optimize
+    :param codon_frequency_table: codon frequency table
+    :return: optimized sequence and there ids
+    """
     valid_sequence_ids = []
     optimized_sequences = []
     for seq_id in not_optimized.keys():
         seq_to_test = Sequence(str(not_optimized[seq_id].seq))
-        if seq_to_test.isRNA():
-            seq_to_test.convertRNAtoDNA()
-        if seq_to_test.isValid():
+        if seq_to_test.is_rna():
+            seq_to_test.convert_rna_to_dna()
+        if seq_to_test.is_valid():
             seq_to_test.general_info()
             optimized_seq = seq_to_test.get_codon_optimized_sequence(codon_frequency_table)
             seqrec = SeqRecord(optimized_seq, id=seq_id, description="codon optimized sequence")
@@ -191,6 +228,10 @@ def process_sequences(not_optimized, codon_frequency_table):
 
 
 def codon_optimizer():
+    """
+    Optimize sequence codons according to reference frequency codon table and format input sequence in fasta format
+    :return: fasta formatted sequences
+    """
     parser = program_setting()
     args = parser.parse_args()
 

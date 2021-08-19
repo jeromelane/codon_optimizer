@@ -23,3 +23,13 @@ python codon_optimizer.py -input myfile.fa -nolog
 # use a specific codon usage table
 python codon_optimizer.py -input myfile.fa -reffreqtab codonusage.txt
   ```
+
+  Egg can be built and installed using following command:
+ ```python
+  python setup.py install
+ ```
+
+  Once codon_optimizer installed test can be applied with the following command in the root folder:
+ ```python
+  python -m test
+ ```

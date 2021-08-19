@@ -35,7 +35,7 @@ except:
 if __name__ == '__main__':
     setup(
         name='codon_optimizer',
-        version="0.2.0",
+        version="0.3.0",
         description="Substitute codons by those that are the most frequent in a specific organism.",
         author="Jerome Lane",
         author_email="jerome.lane@hotmail.com",
