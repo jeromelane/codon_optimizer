@@ -1,5 +1,7 @@
 # codon_optimizer
-A simple tool to produce DNA sequences with the most abundant codons in a specific organism.
+A simple tool to produce DNA sequences with the most abundant codons in a specific organism. This tool provides a basic implementation of codon optimization, using a reference codon usage database. More advanced tools like **[DNAChisel](https://github.com/Edinburgh-Genome-Foundry/DnaChisel)** and **[CodonBERT](https://github.com/Sanofi-Public/CodonBERT)** offer more sophisticated and optimized approaches to codon optimization.
+
+The tool uses a reference codon usage database based on human and mouse data. You can find the database at **[Kazusa Codon Usage Database](http://www.kazusa.or.jp/codon/)**. The publication can be accessed via **[PubMed](https://pubmed.ncbi.nlm.nih.gov/10592250/)**.
 
 ## Parameters
 *  `-h, --help`            Show this help message and exit.
