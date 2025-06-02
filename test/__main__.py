@@ -1,4 +1,0 @@
-from .debug import *
-
-tests()
-

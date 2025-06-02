@@ -1,11 +1,9 @@
 import argparse
 import os
 import logging
-
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-
 from numpy import where, arange
 from time import asctime, localtime, time
 from pandas import read_csv
@@ -37,23 +35,6 @@ def program_setting():
     return parser
 
 
-class Options(object):
-    def __init__(self, args):
-        self.args = args
-
-    def __str__(self):
-        mystring = "Options: \n"
-        index = 1
-        for k in self.args.__dict__:
-            if self.args.__dict__[k] is not None:
-                mystring += str(index) + "- " + k + "=" + str(self.args.__dict__[k]) + "\n"
-                index += 1
-        return mystring
-
-    def __repr__(self):
-        return self.format()
-
-
 class Sequence(Seq):
     def __init__(self, sequence):
         Seq.__init__(self, sequence.upper())
@@ -73,7 +54,7 @@ class Sequence(Seq):
         amino_acid = codon_row['AmAcid'].iloc[0]
 
         amino_acid_indexes = where(codon_frequency_table['AmAcid'] == amino_acid)[0]
-        amino_acid_rows = codon_frequency_table.ix[amino_acid_indexes]
+        amino_acid_rows = codon_frequency_table.iloc[amino_acid_indexes]  # Fix: Use `.iloc[]` instead of `.ix[]`
         optimized_codon_index = where(amino_acid_rows["/1000"] == max(amino_acid_rows["/1000"]))[0]
 
         return amino_acid_rows["Codon"].iloc[optimized_codon_index].iloc[0]
@@ -182,7 +163,8 @@ def check_path(args):
     :param args: input data to codon optimizer
     """
     if not os.path.exists(args.input):
-        raise IOError("Please provide a fasta file containing sequences to analyze: file path=" + args.input)
+        logging.error(f"Input file does not exist: {args.input}")
+        raise IOError(f"Please provide a fasta file containing sequences to analyze: file path={args.input}")
 
 
 def get_reference_frequency_table(args, execution_path):
@@ -194,9 +176,12 @@ def get_reference_frequency_table(args, execution_path):
     """
     if args.reference_frequency_table != "":
         if not os.path.exists(args.reference_frequency_table):
+            logging.error(f"Reference frequency table does not exist: {args.reference_frequency_table}")
             raise IOError("Please provide a correct path to the reference file.")
         return read_csv(args.reference_frequency_table)
     else:
+        logging.info("No reference frequency table provided, using Homo sapiens as default table.")
+        logging.info(execution_path + "/reference_seq/Homo_sapiens_codon_frequency.csv")
         return read_csv(execution_path + "/reference_seq/Homo_sapiens_codon_frequency.csv")
 
 
@@ -208,7 +193,7 @@ def process_sequences(not_optimized, codon_frequency_table):
         - Replace codons by there most frequent synonymous codon
     :param not_optimized: Sequence to optimize
     :param codon_frequency_table: codon frequency table
-    :return: optimized sequence and there ids
+    :return: optimized sequence and their ids
     """
     valid_sequence_ids = []
     optimized_sequences = []
@@ -222,8 +207,10 @@ def process_sequences(not_optimized, codon_frequency_table):
             seqrec = SeqRecord(optimized_seq, id=seq_id, description="codon optimized sequence")
             optimized_sequences.append(seqrec)
             valid_sequence_ids.append(seq_id)
-
-        logging.info(seq_id + " : " + str(seq_to_test.qc_msg))
+        if not seq_to_test.is_valid():
+            logging.warning(f"{seq_id} : {str(seq_to_test.qc_msg)}")
+        else:
+            logging.info(f"{seq_id} : Sequence is valid and optimized.")
     return valid_sequence_ids, optimized_sequences
 
 
@@ -241,25 +228,46 @@ def codon_optimizer():
     output = args.output
     check_path(args)
 
+    # Ensure output path is correct (set it to the current directory if not specified)
+    if not output:
+        output = os.path.join(os.getcwd(), 'default_output.fasta')
+
+    # Set up logging if not disabled
     if not args.nolog:
-        logging.basicConfig(filename=os.path.dirname(output) + '/codon_optimizer.log', level=logging.INFO)
+        logger = logging.getLogger()
+        logger.setLevel(logging.INFO)
+
+        # StreamHandler for logging to terminal
+        stream_handler = logging.StreamHandler()
+        stream_handler.setLevel(logging.INFO)
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        stream_handler.setFormatter(formatter)
+        logger.addHandler(stream_handler)
+
+        # FileHandler for logging to file
+        log_filename = os.path.join(os.getcwd(), 'codon_optimizer.log')
+        file_handler = logging.FileHandler(log_filename)
+        file_handler.setLevel(logging.INFO)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
 
     logging.info("--- Program starts at: %s ---" % asctime(localtime(time())))
     logging.info("Codon optimizer")
-    logging.info(Options(args))
+    logging.info(f"Arguments: {args}")
 
     codon_frequency_table = get_reference_frequency_table(args, execution_path)
     not_optimized = SeqIO.to_dict(SeqIO.parse(args.input, "fasta"))
     valid_sequence_ids, optimized_sequences = process_sequences(not_optimized, codon_frequency_table)
 
     if len(valid_sequence_ids) == 0:
-        print("No valid sequences. No sequence optimized.")
+        logging.warning("No valid sequences. No sequence optimized.")
     elif output != "":
         with open(output, 'w') as f_out:
             SeqIO.write(optimized_sequences, f_out, 'fasta')
+        logging.info(f"Optimized sequences written to {output}")
     else:
         for sequence in optimized_sequences:
-            print(sequence.format('fasta'))
+            logging.info(sequence.format('fasta'))
 
     logging.info("--- Program ends at: %s ---" % asctime(localtime(time())))
 
@@ -268,4 +276,4 @@ if __name__ == '__main__':
     try:
         codon_optimizer()
     except IOError as e:
-        print(e.args)
+        logging.error(f"IOError: {e.args}")

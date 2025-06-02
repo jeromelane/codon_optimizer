@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "codon_optimizer"
+version = "0.3.0"
+description = "Substitute codons by those that are the most frequent in a specific organism."
+authors = [{name = "Jerome Lane", email = "jerome.lane@hotmail.com"}]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+
+# Dependencies
+dependencies = [
+    "biopython",
+    "numpy",
+    "pandas",
+]
+
+# Python version requirements
+requires-python = ">=3.7"
+
+# Optional dependencies (if applicable)
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "flake8",
+    "black",
+]
+
+# Adding the entry-points section correctly
+[project.scripts]
+codon_optimizer = "codon_optimizer.codon_optimizer:codon_optimizer"
+
+[options.package_data]
+"codon_optimizer" = ["reference_seq/*.csv"]
+
+[project.urls]
+Repository = "https://github.com/jeromelane/codon_optimizer.git"
